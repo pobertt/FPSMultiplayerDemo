@@ -2,23 +2,33 @@ extends CharacterBody3D
 
 @onready var camera = $Camera3D
 @onready var anim_player = $AnimationPlayer
+@onready var muzzle_flash: GPUParticles3D = $Camera3D/demogun/MuzzleFlash
 
 const SPEED = 10
 const JUMP_VELOCITY = 10
 
+func _enter_tree() -> void:
+	set_multiplayer_authority(str(name).to_int())
+
 func _ready():
+	if not is_multiplayer_authority(): return
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	camera.current = true
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority(): return
+	
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * 0.005)
 		camera.rotate_x(-event.relative.y * 0.005)
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 	
 	if Input.is_action_just_pressed("shoot") and anim_player.current_animation != "shoot":
-		play_shoot_effects()
+		play_shoot_effects.rpc()
 
 func _physics_process(delta: float) -> void:
+	if not is_multiplayer_authority(): return
+	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -47,7 +57,14 @@ func _physics_process(delta: float) -> void:
 		anim_player.play("idle_animation")
 
 	move_and_slide()
-	
+
+@rpc("call_local")	
 func play_shoot_effects():
 	anim_player.stop()
 	anim_player.play("shoot")
+	muzzle_flash.restart()
+	muzzle_flash.emitting = true
+
+func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "shoot":
+		anim_player.play("idle_animation")
