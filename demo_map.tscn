@@ -1,0 +1,19 @@
+[gd_scene load_steps=6 format=3 uid="uid://c6avujfxe0ebk"]
+
+[ext_resource type="PackedScene" uid="uid://bscu5r8t3qyi4" path="res://DemoMap.blend" id="1_rcjv3"]
+[ext_resource type="Texture2D" uid="uid://be4p8buj4tlq5" path="res://addons/kenney_prototype_textures/dark/texture_09.png" id="2_31b6i"]
+[ext_resource type="Texture2D" uid="uid://cbkal530t1jyi" path="res://addons/kenney_prototype_textures/orange/texture_10.png" id="3_sx3v2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fpe68"]
+albedo_texture = ExtResource("2_31b6i")
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3041f"]
+albedo_texture = ExtResource("3_sx3v2")
+uv1_triplanar = true
+
+[node name="DemoMap" instance=ExtResource("1_rcjv3")]
+
+[node name="Place" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_fpe68")
+surface_material_override/1 = SubResource("StandardMaterial3D_3041f")
