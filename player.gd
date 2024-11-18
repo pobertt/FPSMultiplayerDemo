@@ -5,7 +5,7 @@ extends CharacterBody3D
 const SPEED = 10
 const JUMP_VELOCITY = 10
 
-func ready():
+func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event: InputEvent) -> void:
