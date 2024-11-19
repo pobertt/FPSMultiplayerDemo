@@ -1,8 +1,13 @@
 extends CharacterBody3D
 
+signal health_changed(health_value)
+
 @onready var camera = $Camera3D
 @onready var anim_player = $AnimationPlayer
 @onready var muzzle_flash: GPUParticles3D = $Camera3D/demogun/MuzzleFlash
+@onready var raycast: RayCast3D = $Camera3D/RayCast3D
+
+var health = 3
 
 const SPEED = 10
 const JUMP_VELOCITY = 10
@@ -25,6 +30,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("shoot") and anim_player.current_animation != "shoot":
 		play_shoot_effects.rpc()
+		if raycast.is_colliding():
+			var hit_player = raycast.get_collider()
+			hit_player.recieve_damage.rpc_id(hit_player.get_multiplayer_authority())
 
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return
@@ -64,7 +72,16 @@ func play_shoot_effects():
 	anim_player.play("shoot")
 	muzzle_flash.restart()
 	muzzle_flash.emitting = true
+	
+@rpc("any_peer")
+func recieve_damage():
+	health -= 1
+	if health <= 0:
+		health = 3
+		position = Vector3.ZERO
+	health_changed.emit(health)
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "shoot":
 		anim_player.play("idle_animation")
+	
