@@ -75,7 +75,7 @@ func play_shoot_effects():
 	
 @rpc("any_peer")
 func recieve_damage():
-	health -= 1
+	health = health - 1
 	if health <= 0:
 		health = 3
 		position = Vector3.ZERO
