@@ -5,9 +5,8 @@ extends Node
 @onready var hud: Control = $CanvasLayer/HUD
 @onready var health_bar: ProgressBar = $CanvasLayer/HUD/HealthBar
 
-
 const Player = preload("res://player.tscn")
-const PORT = 9999
+const PORT = 6000
 var enet_peer = ENetMultiplayerPeer.new()
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -64,12 +63,15 @@ func upnp_setup():
 	var upnp = UPNP.new()
 	
 	var discover_result = upnp.discover()
-	assert(discover_result == UPNP.UPNP_RESULT_SUCCESS, "UPNP Discover Failed! Error %s" % discover_result)
+	assert(discover_result == UPNP.UPNP_RESULT_SUCCESS, \
+		"UPNP Discover Failed! Error %s" % discover_result)
 	
-	assert(upnp.get_gateway() and upnp.get_gateway().is_valid_gateway(), "UPNP Invalid Gateway!")
+	assert(upnp.get_gateway() and upnp.get_gateway().is_valid_gateway(), \
+		"UPNP Invalid Gateway!")
 	
 	var map_result = upnp.add_port_mapping(PORT)
-	assert(map_result == UPNP.UPNP_RESULT_SUCCESS, "UPNP Port Mapping Failed! Error %s" % map_result)
+	assert(map_result == UPNP.UPNP_RESULT_SUCCESS, \
+		"UPNP Port Mapping Failed! Error %s" % map_result)
 	
-	print("Success! Join AddressL $s" % upnp.query_external_address())
+	print("Success! Join Address: $s" % upnp.query_external_address())
 	
