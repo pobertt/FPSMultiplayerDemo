@@ -78,3 +78,4 @@ func upnp_setup():
 	
 	print("Success! Join Address: $s" % upnp.query_external_address())
 	
+#ERRORS, on laptop ERROR 0, on PC ERROR 5
